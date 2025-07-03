@@ -1,3 +1,5 @@
+import throttle from 'lodash.throttle'; 
+
 const STORAGE_KEY = "feedback-form-state";
 
 let formData = {
@@ -8,7 +10,8 @@ let formData = {
 const form = document.querySelector(".feedback-form");
 const { email, message } = form.elements;
 
-form.addEventListener("input", onInput);
+// 🔁 ЗМІНИЛИ ЦЕЙ РЯДОК:
+form.addEventListener("input", throttle(onInput, 500));
 form.addEventListener("submit", onSubmit);
 
 // Відновлення з локального сховища
