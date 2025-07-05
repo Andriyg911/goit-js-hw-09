@@ -1,43 +1,34 @@
-import throttle from 'lodash.throttle'; 
+const form = document.querySelector('.feedback-form');
+const STORAGE_KEY = 'feedback-form-state';
+let formData = { email: '', message: '' };
 
-const STORAGE_KEY = "feedback-form-state";
-
-let formData = {
-  email: "",
-  message: "",
-};
-
-const form = document.querySelector(".feedback-form");
-const { email, message } = form.elements;
-
-// 🔁 ЗМІНИЛИ ЦЕЙ РЯДОК:
-form.addEventListener("input", throttle(onInput, 500));
-form.addEventListener("submit", onSubmit);
-
-// Відновлення з локального сховища
-const savedData = localStorage.getItem(STORAGE_KEY);
-if (savedData) {
-  formData = JSON.parse(savedData);
-  email.value = formData.email || "";
-  message.value = formData.message || "";
+// Відновлення з localStorage
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved) {
+  try {
+    formData = JSON.parse(saved);
+    form.email.value = formData.email || '';
+    form.message.value = formData.message || '';
+  } catch (e) {
+    console.error('Error parsing saved form data:', e);
+  }
 }
 
-function onInput(evt) {
-  formData[evt.target.name] = evt.target.value.trim();
+// Слухач input
+form.addEventListener('input', e => {
+  formData[e.target.name] = e.target.value.trim();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-}
+});
 
-function onSubmit(evt) {
-  evt.preventDefault();
-
+// Слухач submit
+form.addEventListener('submit', e => {
+  e.preventDefault();
   if (!formData.email || !formData.message) {
-    alert("Fill please all fields");
+    alert('Fill please all fields');
     return;
   }
-
   console.log(formData);
-
   localStorage.removeItem(STORAGE_KEY);
   form.reset();
-  formData = { email: "", message: "" };
-}
+  formData = { email: '', message: '' };
+});
